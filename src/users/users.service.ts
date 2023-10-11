@@ -43,6 +43,7 @@ export class UsersService {
     return this.UserModel.updateOne({ _id: id }, { ...updateUserDto });
   }
   isValidPassword(password: string, hashPassword: string) {
+    console.log(password, hashPassword);
     return compareSync(password, hashPassword);
   }
   remove(id: string) {
