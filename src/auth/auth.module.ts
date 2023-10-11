@@ -14,9 +14,9 @@ import { JwtStrategy } from "./passport/jwt.strategy";
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secretOrPrivateKey: configService.get<string>("JWT_SECRET_KEY"),
+        secretOrPrivateKey: configService.get<string>("JWT_ACCESS_TOKEN"),
         signOptions: {
-          expiresIn: configService.get<string>("JWT_EXPIRE_TIME"),
+          expiresIn: configService.get<string>("JWT_ACCESS_EXPIRE"),
         },
       }),
       inject: [ConfigService],
@@ -25,4 +25,4 @@ import { JwtStrategy } from "./passport/jwt.strategy";
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }
