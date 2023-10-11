@@ -22,7 +22,7 @@ export class UsersService {
       username: createUserDto.username,
       email: createUserDto.email,
       age: createUserDto.age,
-      address: createUserDto.address
+      address: createUserDto.address,
     });
     return user;
   }
