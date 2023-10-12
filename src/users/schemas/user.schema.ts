@@ -9,16 +9,22 @@ export class User {
   email: string;
 
   @Prop()
-  role: string;
+  username: string;
 
   @Prop()
-  username: string;
+  role: string;
 
   @Prop()
   password: string;
 
   @Prop()
   age: string;
+
+  @Prop()
+  gender: string;
+
+  @Prop()
+  refreshToken: string;
 
   @Prop()
   address: string;

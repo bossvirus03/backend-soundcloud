@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 //import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from "@nestjs/mongoose";
@@ -18,6 +18,10 @@ export class UsersService {
     return hash;
   }
   async create(createUserDto: CreateUserDto) {
+    let isExit = await this.UserModel.findOne({ email: createUserDto.email });
+    if (isExit) throw new BadRequestException("Email da ton tai")
+    isExit = await this.UserModel.findOne({ username: createUserDto.username });
+    if (isExit) throw new BadRequestException("username da ton tai")
     const hashPassword = this.getHashPassword(createUserDto.password);
     const user = await this.UserModel.create({
       password: hashPassword,
@@ -26,7 +30,10 @@ export class UsersService {
       age: createUserDto.age,
       address: createUserDto.address,
     });
-    return user;
+    return {
+      _id: user._id,
+      createdAt: user.createdAt,
+    };
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {
@@ -56,7 +63,7 @@ export class UsersService {
 
   findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return "not found user";
-    return this.UserModel.findOne({ _id: id });
+    return this.UserModel.findOne({ _id: id }).select("-password");
   }
   findByUsername(username: string) {
     return this.UserModel.findOne({ username: username });
@@ -65,10 +72,15 @@ export class UsersService {
     return this.UserModel.updateOne({ _id: id }, { ...updateUserDto });
   }
   isValidPassword(password: string, hashPassword: string) {
-    console.log(password, hashPassword);
     return compareSync(password, hashPassword);
   }
   remove(id: string) {
     return this.UserModel.softDelete({ _id: id });
+  }
+  async updateUserToken(refreshToken: string, _id) {
+    return await this.UserModel.updateOne({ _id }, { refreshToken });
+  }
+  async findUserByToken(refreshToken: string) {
+    return await this.UserModel.findOne({ refreshToken });
   }
 }

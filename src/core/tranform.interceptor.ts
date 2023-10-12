@@ -32,9 +32,7 @@ export class TransformInterceptor<T>
                         RESPONSE_MESSAGE,
                         context.getHandler(),
                     ) || '',
-                    data: {
-                        result: data,
-                    }
+                    data: data,
                 })),
             );
     }
