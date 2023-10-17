@@ -39,7 +39,7 @@ export class RegisterUserDto {
   @IsString()
   password: string;
 
-  @IsNotEmpty({ message: 'email khong dc de trong' })
+  @IsNotEmpty({ message: 'address khong dc de trong' })
   address: string;
 
   @IsNotEmpty({ message: 'gender khong dc de trong' })

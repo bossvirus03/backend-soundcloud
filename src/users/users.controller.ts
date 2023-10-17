@@ -18,7 +18,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  @ResponseMessage("Create a new user")
+  @ResponseMessage("Created a new user")
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -41,7 +41,7 @@ export class UsersController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
-
+  @ResponseMessage("Deleted a new user")
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
