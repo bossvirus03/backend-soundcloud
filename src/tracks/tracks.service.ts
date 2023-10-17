@@ -36,6 +36,13 @@ export class TracksService {
     return track;
   }
 
+  async getTopTrack(limit: number, category: string) {
+    const result = await this.trackModel
+      .find({ category })
+      .sort({ countPlay: -1 })
+      .limit(limit);
+    return result;
+  }
   async findAll(currentPage: number, limit: number, qs: string) {
     const { filter, sort, population } = aqp(qs);
     delete filter.page;

@@ -11,7 +11,7 @@ import {
 import { TracksService } from "./tracks.service";
 import { CreateTrackDto } from "./dto/create-track.dto";
 import { UpdateTrackDto } from "./dto/update-track.dto";
-import { User } from "src/decorator/customize";
+import { Public, User } from "src/decorator/customize";
 import { IUser } from "src/users/user.interface";
 
 @Controller("tracks")
@@ -21,6 +21,14 @@ export class TracksController {
   @Post()
   create(@Body() createTrackDto: CreateTrackDto, @User() user: IUser) {
     return this.tracksService.create(createTrackDto, user);
+  }
+  @Public()
+  @Post("/top")
+  getTopTrack(
+    @Body("limit") limit: number,
+    @Body("category") category: string,
+  ) {
+    return this.tracksService.getTopTrack(limit, category);
   }
 
   @Get()
