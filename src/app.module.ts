@@ -8,6 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 import { softDeletePlugin } from "soft-delete-plugin-mongoose";
 import { TracksModule } from "./tracks/tracks.module";
 import { FilesModule } from "./files/files.module";
+import { PlaylistsModule } from './playlists/playlists.module';
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -28,6 +29,7 @@ import { FilesModule } from "./files/files.module";
     AuthModule,
     TracksModule,
     FilesModule,
+    PlaylistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
