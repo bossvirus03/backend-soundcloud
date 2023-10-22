@@ -37,19 +37,19 @@ export class PlaylistsService {
 
     return {
       meta: {
-        current: page, //trang hiện tại
-        pageSize: limit, //số lượng bản ghi đã lấy
-        pages: totalPages, //tổng số trang với điều kiện query
-        total: totalItems, // tổng số phần tử (số bản ghi)
+        current: page,
+        pageSize: limit,
+        pages: totalPages,
+        total: totalItems,
       },
-      result, //kết quả query
+      result,
     };
   }
 
   async findOne(id: string) {
     const result = await this.PlaylistModel.findOne({ _id: id });
     return result;
-  }
+  } 
 
   async update(updatePlaylistDto: UpdatePlaylistDto) {
     const playlist = await this.PlaylistModel.updateOne(

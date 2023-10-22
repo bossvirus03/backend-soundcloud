@@ -13,10 +13,15 @@ import { CreateTrackDto } from "./dto/create-track.dto";
 import { UpdateTrackDto } from "./dto/update-track.dto";
 import { Public, User } from "src/decorator/customize";
 import { IUser } from "src/users/user.interface";
+import { CommentsService } from "src/comments/comments.service";
+import mongoose from "mongoose";
 
 @Controller("tracks")
 export class TracksController {
-  constructor(private readonly tracksService: TracksService) {}
+  constructor(
+    private readonly tracksService: TracksService,
+    private readonly commentsService: CommentsService,
+  ) {}
 
   @Post()
   create(@Body() createTrackDto: CreateTrackDto, @User() user: IUser) {
@@ -39,7 +44,15 @@ export class TracksController {
   ) {
     return this.tracksService.findAll(+currentPage, limit, qs);
   }
-
+  @Post("/comments")
+  findAllComments(
+    @Query("current") current: number,
+    @Query("pageSize") pageSize: number,
+    @Query("trackId") trackId: mongoose.Types.ObjectId,
+    @Query() qs: string,
+  ) {
+    return this.commentsService.findAllComments(current, pageSize, trackId, qs);
+  }
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.tracksService.findOne(id);
