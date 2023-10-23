@@ -49,9 +49,11 @@ export class PlaylistsService {
   async findOne(id: string) {
     const result = await this.PlaylistModel.findOne({ _id: id });
     return result;
-  } 
+  }
 
-  async update(updatePlaylistDto: UpdatePlaylistDto) {
+  async update(updatePlaylistDto: UpdatePlaylistDto, user: IUser) {
+    const isTrack = await this.PlaylistModel.find({ user });
+    console.log(isTrack);
     const playlist = await this.PlaylistModel.updateOne(
       { _id: updatePlaylistDto.id },
       {

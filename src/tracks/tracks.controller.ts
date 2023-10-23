@@ -53,6 +53,31 @@ export class TracksController {
   ) {
     return this.commentsService.findAllComments(current, pageSize, trackId, qs);
   }
+  @Public()
+  @Post("/increase-view")
+  increaseView(@Body("trackId") trackId: string) {
+    return this.tracksService.increaseView(trackId);
+  }
+  @Post("/user")
+  getTrackCreatedByUser(
+    @Query("page") page: number,
+    @Query("limit") limit: number,
+    @Query() qs: string,
+    @Body("id") userId: string,
+  ) {
+    return this.tracksService.getTrackCreatedByUser(page, limit, userId, qs);
+  }
+
+  @Post("/search")
+  searchTrackWithName(
+    @Body("title") title: string,
+    @Body("page") page: number,
+    @Body("limit") limit: number,
+    @Body() qs: string,
+  ) {
+    return this.tracksService.searchTrackWithName(page, limit, title, qs);
+  }
+
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.tracksService.findOne(id);

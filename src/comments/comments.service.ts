@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { IUser } from "src/users/user.interface";
 import { Comment } from "./schemas/comment.schema";
 import aqp from "api-query-params";

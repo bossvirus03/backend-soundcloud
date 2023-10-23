@@ -16,9 +16,9 @@ export class Tracks {
   @Prop()
   trackUrl: string;
   @Prop()
-  countLike: string;
+  countLike: number;
   @Prop()
-  countPlay: string;
+  countPlay: number;
   @Prop()
   uploader: mongoose.Types.ObjectId;
 }

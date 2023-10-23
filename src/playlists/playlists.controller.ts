@@ -38,8 +38,8 @@ export class PlaylistsController {
   }
 
   @Patch()
-  update(@Body() updatePlaylistDto: UpdatePlaylistDto) {
-    return this.playlistsService.update(updatePlaylistDto);
+  update(@Body() updatePlaylistDto: UpdatePlaylistDto, @User() user: IUser) {
+    return this.playlistsService.update(updatePlaylistDto, user);
   }
 
   @Delete(":id")

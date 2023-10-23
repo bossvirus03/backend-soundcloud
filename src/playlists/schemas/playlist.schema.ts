@@ -12,6 +12,6 @@ export class Playlist {
   @Prop()
   user: mongoose.Types.ObjectId;
   @Prop()
-  tracks: Array<mongoose.Types.ObjectId>;
+  tracks: mongoose.Types.ObjectId[];
 }
 export const PlaylistSchema = SchemaFactory.createForClass(Playlist);
