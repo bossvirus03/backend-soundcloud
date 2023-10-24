@@ -10,6 +10,7 @@ import { TransformInterceptor } from "./core/tranform.interceptor";
 import cookieParser from "cookie-parser";
 import { JwtAuthGuard } from "./auth/jwt-auth.guard";
 import { join } from "path";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -33,6 +34,23 @@ async function bootstrap() {
   //cookie
   app.use(cookieParser());
 
+  const config = new DocumentBuilder()
+    .setTitle("NestJS series API Document SoundCloud")
+    .setDescription("All modules APIs")
+    .setVersion("1.0")
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "Bearer",
+        bearerFormat: "JWT",
+        in: "header",
+      },
+      "token",
+    )
+    .addSecurityRequirements("token")
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api", app, document);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(port, () => {
     console.log(`this server listening on port ${port} ...`);

@@ -29,6 +29,7 @@
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.0",
+    "@nestjs/swagger": "^7.1.14",
     "@types/bcryptjs": "^2.4.4",
     "@types/ms": "^0.7.32",
     "api-query-params": "^5.4.0",

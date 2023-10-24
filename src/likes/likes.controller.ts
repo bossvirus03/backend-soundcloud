@@ -3,7 +3,8 @@ import { LikesService } from "./likes.service";
 import { IUser } from "src/users/user.interface";
 import { User } from "src/decorator/customize";
 import { CreateLikeDto } from "./dto/create-like.dto";
-
+import { ApiTags } from "@nestjs/swagger";
+@ApiTags("likes")
 @Controller("likes")
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}

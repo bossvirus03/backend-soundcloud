@@ -9,5 +9,5 @@ export class AppController {
     private readonly appService: AppService,
     private configService: ConfigService,
     private authService: AuthService,
-  ) { }
+  ) {}
 }

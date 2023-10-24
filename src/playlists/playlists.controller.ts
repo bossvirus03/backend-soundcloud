@@ -13,7 +13,8 @@ import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { User } from "src/decorator/customize";
 import { IUser } from "src/users/user.interface";
-
+import { ApiTags } from "@nestjs/swagger";
+@ApiTags("playlists")
 @Controller("playlists")
 export class PlaylistsController {
   constructor(private readonly playlistsService: PlaylistsService) {}
