@@ -50,7 +50,11 @@ async function bootstrap() {
     .addSecurityRequirements("token")
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("/api", app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(port, () => {
     console.log(`this server listening on port ${port} ...`);
