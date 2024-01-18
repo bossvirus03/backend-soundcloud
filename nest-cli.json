@@ -42,9 +42,9 @@
       "type": "application",
       "root": "apps/interact-microservice",
       "entryFile": "main",
-      "sourceRoot": "apps/interact/src",
+      "sourceRoot": "apps/interact-microservice/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/interact/tsconfig.app.json"
+        "tsConfigPath": "apps/interact-microservice/tsconfig.app.json"
       }
     },
     "api-gateway": {

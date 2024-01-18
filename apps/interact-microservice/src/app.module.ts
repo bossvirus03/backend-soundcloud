@@ -6,6 +6,7 @@ import { CommentsModule } from "./comments/comments.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { softDeletePlugin } from "soft-delete-plugin-mongoose";
 import { MongooseModule } from "@nestjs/mongoose";
+import { PostgresService } from "./likes/postgres.service";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MongooseModule } from "@nestjs/mongoose";
     }),
   ],
   controllers: [InteractController],
-  providers: [InteractService],
+  providers: [InteractService, PostgresService],
+  exports: [PostgresService],
 })
 export class AppModule {}

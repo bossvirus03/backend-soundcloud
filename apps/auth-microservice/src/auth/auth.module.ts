@@ -8,6 +8,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-redis-store";
+import { PostgresService } from "apps/interact-microservice/src/likes/postgres.service";
 
 @Module({
   imports: [

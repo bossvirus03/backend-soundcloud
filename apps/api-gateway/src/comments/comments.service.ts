@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { CreateCommentDto } from "./dto/create-comment.dto";
-import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Comment } from "./schemas/comment.schema";
 import aqp from "api-query-params";
 import { IUser } from "@app/lib/interfaces/user/user.interface";
+import { CreateCommentDto } from "@app/lib/dto/comment/create-comment.dto";
+import { UpdateCommentDto } from "@app/lib/dto/comment/update-comment.dto";
+import { Comment } from "apps/interact-microservice/src/comments/schemas/comment.schema";
 
 @Injectable()
 export class CommentsService {

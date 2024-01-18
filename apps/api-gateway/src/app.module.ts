@@ -7,6 +7,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { softDeletePlugin } from "soft-delete-plugin-mongoose";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
+import { LikesModule } from "./likes/likes.module";
+import { CommentsModule } from "./comments/comments.module";
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { UsersModule } from "./users/users.module";
     }),
     AuthModule,
     UsersModule,
+    LikesModule,
+    CommentsModule,
   ],
   controllers: [ApiGatewaysController],
   providers: [ApiGatewaysService],

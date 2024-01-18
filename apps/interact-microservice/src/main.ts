@@ -15,5 +15,6 @@ async function bootstrap() {
   );
 
   await app.listen();
+  console.log("interact running on http://localhost:3004");
 }
 bootstrap();

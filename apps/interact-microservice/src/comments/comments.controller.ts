@@ -8,8 +8,8 @@ import {
   Delete,
 } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
-import { CreateCommentDto } from "./dto/create-comment.dto";
-import { UpdateCommentDto } from "./dto/update-comment.dto";
+import { CreateCommentDto } from "../../../../libs/lib/src/dto/comment/create-comment.dto";
+import { UpdateCommentDto } from "../../../../libs/lib/src/dto/comment/update-comment.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { User } from "@app/lib";
 import { IUser } from "@app/lib/interfaces/user/user.interface";
@@ -25,16 +25,6 @@ export class CommentsController {
   ) {
     return await this.commentsService.create(createCommentDto, user);
   }
-
-  // @Post()
-  // findAll(
-  //   @Query() current: number,
-  //   @Query() pageSize: number,
-  //   @Query() trackId: mongoose.Types.ObjectId,
-  //   @Query() qs: string,
-  // ) {
-  //   return this.commentsService.findAll(current, pageSize, trackId, qs);
-  // }
 
   @Get(":id")
   findOne(@Param("id") id: string) {
