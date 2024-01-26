@@ -1,21 +1,10 @@
 import { Module } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
-import { ClientsModule, Transport } from "@nestjs/microservices";
+import { KafkaModule } from "../kafka/kafka.module";
 
 @Module({
-  imports: [
-    ClientsModule.register([
-      {
-        name: "USER_MICROSERVICE",
-        transport: Transport.TCP,
-        options: {
-          host: "localhost",
-          port: 3003,
-        },
-      },
-    ]),
-  ],
+  imports: [KafkaModule],
   controllers: [UsersController],
   providers: [UsersService],
 })

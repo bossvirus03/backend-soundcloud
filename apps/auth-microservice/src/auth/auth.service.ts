@@ -8,6 +8,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import ms from "ms";
+import { ENUM_USER_TOPICS } from "@app/lib/constant/cafka.topic.constant";
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,7 @@ export class AuthService {
       await this.credentialService.findByUsername(username);
     const id = userCredential._id.toString();
     const user = await RpcRequestWrapper(
-      this.userClient.send({ cmd: "find user by id" }, id),
+      this.userClient.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, id),
     );
     if (userCredential) {
       const isValid = this.credentialService.isValidPassword(
@@ -38,8 +39,7 @@ export class AuthService {
     return null;
   }
   async login(user) {
-    const userChecked = await this.validateUser(user.username, user.password);
-    const { _id, email, role } = userChecked;
+    const { _id, email, role } = user;
     const username = (await this.credentialService.findById(_id.toString()))
       .username;
     const payload = {
@@ -60,7 +60,7 @@ export class AuthService {
 
   async register(user: IUser) {
     const newUser = await RpcRequestWrapper(
-      await this.userClient.send({ cmd: "create a user" }, user),
+      await this.userClient.send(ENUM_USER_TOPICS.CREATE_USER, user),
     );
 
     await this.credentialService.create(
@@ -94,7 +94,7 @@ export class AuthService {
       const id = (await this.credentialService.findUserByToken(refreshToken))
         ._id;
       const user = await RpcRequestWrapper(
-        this.userClient.send({ cmd: "find user by id" }, id),
+        this.userClient.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, id),
       );
       if (user) {
         const { username, _id, email, role } = user;
@@ -135,7 +135,7 @@ export class AuthService {
   }
 
   async getProfile(user: IUser) {
-    return this.userClient.send({ cmd: "find user by id" }, user._id);
+    return this.userClient.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, user._id);
   }
   async logout(payload) {
     await this.cacheManager.del("refreshToken");

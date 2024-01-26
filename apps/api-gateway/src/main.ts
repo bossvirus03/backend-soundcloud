@@ -6,17 +6,20 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
+import { join } from "path";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get("PORT");
 
+  // cors
   app.enableCors({
     origin: true,
     credentials: true,
   });
 
+  // swagger
   const config = new DocumentBuilder()
     .setTitle("NestJS series API Document SoundCloud")
     .setDescription("All modules APIs")
@@ -32,9 +35,7 @@ async function bootstrap() {
     )
     .addSecurityRequirements("token")
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
-
   SwaggerModule.setup("/api", app, document, {
     swaggerOptions: {
       persistAuthorization: true,
@@ -45,7 +46,10 @@ async function bootstrap() {
     new ValidationPipe({ transform: true, stopAtFirstError: true }),
   );
 
+  // static file
+  app.useStaticAssets(join(__dirname, "..", "public"));
+
   await app.listen(port);
-  Logger.log(`🚀 api gateway running on: http://localhost:${port}`);
+  Logger.log(`🚀 api gateway running on: http://localhost:${port}/api`);
 }
 bootstrap();

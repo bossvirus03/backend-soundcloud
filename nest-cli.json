@@ -3,7 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/api-gateway/src",
   "compilerOptions": {
-    "plugins": ["@nestjs/swagger"],
+    "plugins": [
+      "@nestjs/swagger"
+    ],
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
@@ -11,15 +13,6 @@
   "monorepo": true,
   "root": "apps/song-microservice",
   "projects": {
-    "song-microservice": {
-      "type": "application",
-      "root": "apps/song-microservice",
-      "entryFile": "main",
-      "sourceRoot": "apps/song-microservice/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/song-microservice/tsconfig.app.json"
-      }
-    },
     "auth-microservice": {
       "type": "application",
       "root": "apps/auth-microservice",
@@ -63,6 +56,24 @@
       "sourceRoot": "apps/user-microservice/src",
       "compilerOptions": {
         "tsConfigPath": "apps/user-microservice/tsconfig.app.json"
+      }
+    },
+    "song-microservice": {
+      "type": "application",
+      "root": "apps/song-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/song-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/song-microservice/tsconfig.app.json"
+      }
+    },
+    "kafka": {
+      "type": "application",
+      "root": "apps/kafka",
+      "entryFile": "main",
+      "sourceRoot": "apps/kafka/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/kafka/tsconfig.app.json"
       }
     }
   }

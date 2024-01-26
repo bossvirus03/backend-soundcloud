@@ -1,5 +1,5 @@
 import { RpcException } from "@nestjs/microservices";
-import { Observable, firstValueFrom } from "rxjs";
+import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
 
 // export async function AxiosErrorWrapper(axios: Promise<AxiosResponse>) {
 //   try {
@@ -19,10 +19,10 @@ export async function RpcRequestWrapper<T>(obs: Observable<T>) {
       return error;
     });
 }
-export async function RpcResponseWrapper<T>(promise: Promise<T>) {
+export async function RpcResponseWrapper<T>(obs: Observable<T>) {
   try {
-    console.log("true here");
-    return promise;
+    const res = await lastValueFrom(obs);
+    return res;
   } catch (error) {
     if (error) {
       throw new RpcException(error);

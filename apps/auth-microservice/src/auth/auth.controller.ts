@@ -6,7 +6,7 @@ import { MessagePattern, Payload } from "@nestjs/microservices";
 import { RegisterUserDto } from "@app/lib/dto/user/create-user.dto";
 import { CACHE_MANAGER, CacheInterceptor } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
-import { RpcResponseWrapper } from "@app/lib";
+// import { RpcResponseWrapper } from "@app/lib";
 import ms from "ms";
 import { ConfigService } from "@nestjs/config";
 
@@ -20,6 +20,13 @@ export class AuthController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
+  @MessagePattern({ cmd: "auth-validate-user" })
+  async validateUser(@Payload() payload) {
+    const { username, password } = payload;
+    const res = await this.authService.validateUser(username, password);
+    return res;
+  }
+
   @MessagePattern({ cmd: "login-api" })
   async login(@Payload() user: IUser) {
     const res = await this.authService.login(user);
@@ -29,18 +36,6 @@ export class AuthController {
       ms(this.configService.get<string>("JWT_REFRESH_EXPIRE")),
     );
     return res;
-  }
-
-  @MessagePattern({ cmd: "set-cache" })
-  async setCache() {
-    await this.cacheManager.set("newnet", "hello world", 6000 * 10);
-    return true;
-  }
-
-  @MessagePattern({ cmd: "get-cache" })
-  async getCache() {
-    const cache = await this.cacheManager.get("newnet");
-    return cache;
   }
 
   @MessagePattern({ cmd: "register-user-api" })
@@ -58,7 +53,7 @@ export class AuthController {
     const refreshToken = (await this.cacheManager.get(
       "refreshToken",
     )) as string;
-    return RpcResponseWrapper(this.authService.processNewToken(refreshToken));
+    return await this.authService.processNewToken(refreshToken);
   }
 
   @MessagePattern({ cmd: "logout-user-api" })

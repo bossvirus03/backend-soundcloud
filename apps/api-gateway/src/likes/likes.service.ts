@@ -11,10 +11,10 @@ export class LikesService {
     return this.likeClient.send({ cmd: "like-track" }, { createLikeDto, user });
   }
 
-  async getTrackLikedByUser(page, limit, user, qs) {
+  async getTrackLikedByUser(page, limit, user) {
     return this.likeClient.send(
       { cmd: "get-track-liked-by-user" },
-      { page, limit, user, qs },
+      { page, limit, user },
     );
   }
 }

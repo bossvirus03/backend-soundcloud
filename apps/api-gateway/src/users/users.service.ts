@@ -1,15 +1,24 @@
-import { RpcRequestWrapper } from "@app/lib";
+import { ENUM_USER_TOPICS } from "@app/lib/constant/cafka.topic.constant";
 import { CreateUserDto } from "@app/lib/dto/user/create-user.dto";
-import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import { Injectable } from "@nestjs/common";
+import { KafkaService } from "../kafka/kafka.service";
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject("USER_MICROSERVICE") private userClient: ClientProxy) {}
+  constructor(private clientKafka: KafkaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    return await RpcRequestWrapper(
-      this.userClient.send({ cmd: "create a user" }, createUserDto),
+    return await this.clientKafka.produceSend(
+      ENUM_USER_TOPICS.CREATE_USER,
+      createUserDto,
     );
+  }
+
+  async findAll(currentPage, limit, qs) {
+    return await this.clientKafka.produceSend(ENUM_USER_TOPICS.GET_ALL_USERS, {
+      currentPage,
+      limit,
+      qs,
+    });
   }
 }

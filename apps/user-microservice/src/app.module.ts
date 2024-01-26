@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { UsersService } from "./app.service";
-import { UsersController } from "./app.controller";
 import { UsersModule } from "./users/users.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -24,7 +23,7 @@ import { softDeletePlugin } from "soft-delete-plugin-mongoose";
       isGlobal: true,
     }),
   ],
-  controllers: [UsersController],
+  controllers: [],
   providers: [UsersService],
 })
 export class AppModule {}

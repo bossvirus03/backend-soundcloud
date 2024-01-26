@@ -1,11 +1,23 @@
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_INTERACT_URI")
+  url      = env("POSTGRES_POSTGRES_URI")
+}
+
+model tracks {
+  id        Int      @id @default(autoincrement())
+  title     String
+  category  String
+  imgurl    String
+  description String
+  trackurl  String
+  countlike Int      @default(0)
+  countplay Int      @default(0)
+  uploader  String
 }
 
 model likes {
   id        Int      @id @default(autoincrement())
-  userid      String
-  trackid     String
-  quantity Int @default(0)
+  userid  String
+  quantity Int      @default(0)
+  trackid Int
 }

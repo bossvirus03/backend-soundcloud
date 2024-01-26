@@ -1,20 +1,22 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
-import { Logger } from "@nestjs/common";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.KAFKA,
       options: {
-        host: "localhost",
-        port: 3003,
+        client: {
+          brokers: ["localhost:29092"],
+        },
+        consumer: {
+          groupId: "user-consumer",
+        },
       },
     },
   );
-  await app.listen();
-  Logger.log(`🚀 user service running on: http://localhost:3003`);
+  app.listen();
 }
 bootstrap();

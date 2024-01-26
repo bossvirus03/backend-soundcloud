@@ -21,8 +21,7 @@ export class LikesController {
     @Req() req,
     @Query("page") page: number,
     @Query("limit") limit: number,
-    @Query() qs: string,
   ) {
-    return this.likesService.getTrackLikedByUser(page, limit, req.user, qs);
+    return this.likesService.getTrackLikedByUser(page, limit, req.user);
   }
 }

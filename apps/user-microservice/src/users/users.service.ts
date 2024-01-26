@@ -20,9 +20,9 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     let isExit = await this.UserModel.findOne({ email: createUserDto.email });
-    if (isExit) throw new BadRequestException("Email đã tồn tại!");
+    if (isExit) return new BadRequestException("Email đã tồn tại!");
     isExit = await this.UserModel.findOne({ username: createUserDto.username });
-    if (isExit) throw new BadRequestException("Username đã tồn tại!");
+    if (isExit) return new BadRequestException("Username đã tồn tại!");
     const hashPassword = this.getHashPassword(createUserDto.password);
     const user = await this.UserModel.create({
       password: hashPassword,

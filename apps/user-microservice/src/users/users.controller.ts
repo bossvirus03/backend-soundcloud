@@ -1,42 +1,37 @@
 import {
   Controller,
   Get,
-  Post,
+  // Post,
   Body,
   Patch,
   Param,
   Delete,
-  Query,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { ApiTags } from "@nestjs/swagger";
-import { Public, ResponseMessage } from "@app/lib";
+import { Public } from "@app/lib";
 import { CreateUserDto } from "@app/lib/dto/user/create-user.dto";
 import { UpdateUserDto } from "@app/lib/dto/user/update-user.dto";
 import { MessagePattern, Payload } from "@nestjs/microservices";
+import { ENUM_USER_TOPICS } from "@app/lib/constant/cafka.topic.constant";
 
 @ApiTags("users")
-@Controller("users")
+@Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  @Public()
-  @MessagePattern({ cmd: "create a user" })
+  @MessagePattern(ENUM_USER_TOPICS.CREATE_USER)
   async create(@Payload() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
 
-  @Get()
-  findAll(
-    @Query("page") currentPage: string,
-    @Query("limit") limit: string,
-    @Query() qs: string,
-  ) {
+  @MessagePattern(ENUM_USER_TOPICS.GET_ALL_USERS)
+  findAll(@Payload() payload) {
+    const { currentPage, limit, qs } = payload;
     return this.usersService.findAll(+currentPage, +limit, qs);
   }
 
-  @MessagePattern({ cmd: "find user by id" })
+  @MessagePattern(ENUM_USER_TOPICS.FIND_USER_BY_ID)
   async findById(@Payload() id: string) {
     return await this.usersService.findOne(id);
   }
@@ -57,7 +52,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @ResponseMessage("Deleted a new user")
+  // @ResponseMessage("Deleted a new user")
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.usersService.remove(id);
