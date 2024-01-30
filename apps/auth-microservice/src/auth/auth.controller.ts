@@ -9,6 +9,8 @@ import { Cache } from "cache-manager";
 // import { RpcResponseWrapper } from "@app/lib";
 import ms from "ms";
 import { ConfigService } from "@nestjs/config";
+import { ENUM_AUTH_TOPICS } from "@app/lib/constant/cafka.topic.constant";
+import { CredentialService } from "../credential/credential.service";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -16,20 +18,23 @@ import { ConfigService } from "@nestjs/config";
 export class AuthController {
   constructor(
     private authService: AuthService,
+    private credentialService: CredentialService,
     private configService: ConfigService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  @MessagePattern({ cmd: "auth-validate-user" })
+  @MessagePattern(ENUM_AUTH_TOPICS.VALIDATE_USER)
   async validateUser(@Payload() payload) {
+    console.log("check payload login>>>", payload);
+
     const { username, password } = payload;
     const res = await this.authService.validateUser(username, password);
-    return res;
+    return res; //req.user
   }
 
-  @MessagePattern({ cmd: "login-api" })
-  async login(@Payload() user: IUser) {
-    const res = await this.authService.login(user);
+  @MessagePattern(ENUM_AUTH_TOPICS.LOGIN)
+  async login(@Payload() payload) {
+    const res = await this.authService.login(payload);
     await this.cacheManager.set(
       "refreshToken",
       res.refresh_token,
@@ -38,17 +43,20 @@ export class AuthController {
     return res;
   }
 
-  @MessagePattern({ cmd: "register-user-api" })
+  @MessagePattern(ENUM_AUTH_TOPICS.REGISTER)
   async register(@Payload() registerUserDto: RegisterUserDto) {
-    return this.authService.register(registerUserDto);
+    console.log("registerUserDto ", registerUserDto);
+
+    const auth = await this.authService.register(registerUserDto);
+    return auth;
   }
 
-  @MessagePattern({ cmd: "get-profile-api" })
+  @MessagePattern(ENUM_AUTH_TOPICS.GET_PROFILE)
   getProfile(@Payload() user: IUser) {
     return this.authService.getProfile(user);
   }
 
-  @MessagePattern({ cmd: "refresh-api" })
+  @MessagePattern(ENUM_AUTH_TOPICS.REFRESH)
   async handleRefresh() {
     const refreshToken = (await this.cacheManager.get(
       "refreshToken",
@@ -56,8 +64,13 @@ export class AuthController {
     return await this.authService.processNewToken(refreshToken);
   }
 
-  @MessagePattern({ cmd: "logout-user-api" })
+  @MessagePattern(ENUM_AUTH_TOPICS.REFRESH)
   async handleLogout(@Payload() payload) {
     return this.authService.logout(payload);
+  }
+
+  @MessagePattern(ENUM_AUTH_TOPICS.CREDENTIAL_FIND_USERNAME)
+  async findCredentByUsername(@Payload() payload) {
+    return await this.credentialService.findByUsername(payload);
   }
 }

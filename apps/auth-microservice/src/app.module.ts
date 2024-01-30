@@ -6,7 +6,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { softDeletePlugin } from "soft-delete-plugin-mongoose";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from "./auth/auth.module";
-
+import { CacheModule } from "@nestjs/cache-manager";
+import * as redisStore from "cache-manager-redis-store";
 @Module({
   imports: [
     AuthModule,
@@ -24,6 +25,12 @@ import { AuthModule } from "./auth/auth.module";
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
     }),
   ],
   controllers: [AuthMicroserviceController],

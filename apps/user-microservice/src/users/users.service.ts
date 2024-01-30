@@ -1,37 +1,37 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./schemas/user.schema";
-import { compareSync, genSaltSync, hashSync } from "bcryptjs";
+import { compareSync } from "bcryptjs";
 import { SoftDeleteModel } from "soft-delete-plugin-mongoose";
 import aqp from "api-query-params";
 import { CreateUserDto } from "@app/lib/dto/user/create-user.dto";
-
+import { ClientKafka } from "@nestjs/microservices";
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private UserModel: SoftDeleteModel<UserDocument>,
+    @Inject("USER_MICROSERVICE") private authClient: ClientKafka,
   ) {}
 
-  getHashPassword(password: string) {
-    const salt = genSaltSync(10);
-    const hash = hashSync(password, salt);
-    return hash;
-  }
-
   async create(createUserDto: CreateUserDto) {
-    let isExit = await this.UserModel.findOne({ email: createUserDto.email });
+    // const { username } = createUserDto;
+    const isExit = await this.UserModel.findOne({ email: createUserDto.email });
     if (isExit) return new BadRequestException("Email đã tồn tại!");
-    isExit = await this.UserModel.findOne({ username: createUserDto.username });
+    // isExit = await RpcResponseWrapper(
+    //   await this.authClient.send(
+    //     ENUM_AUTH_TOPICS.CREDENTIAL_FIND_USERNAME,
+    //     username,
+    //   ),
+    // );
+
     if (isExit) return new BadRequestException("Username đã tồn tại!");
-    const hashPassword = this.getHashPassword(createUserDto.password);
     const user = await this.UserModel.create({
-      password: hashPassword,
-      username: createUserDto.username,
       email: createUserDto.email,
       age: createUserDto.age,
       address: createUserDto.address,
       ...createUserDto,
     });
+
     return {
       _id: user._id,
       createdAt: user.createdAt,

@@ -22,7 +22,8 @@ export class UsersController {
 
   @MessagePattern(ENUM_USER_TOPICS.CREATE_USER)
   async create(@Payload() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+    const userProfile = await this.usersService.create(createUserDto);
+    return userProfile;
   }
 
   @MessagePattern(ENUM_USER_TOPICS.GET_ALL_USERS)
@@ -33,7 +34,8 @@ export class UsersController {
 
   @MessagePattern(ENUM_USER_TOPICS.FIND_USER_BY_ID)
   async findById(@Payload() id: string) {
-    return await this.usersService.findOne(id);
+    const user = await this.usersService.findOne(id);
+    return { ...user };
   }
 
   @Get(":id")

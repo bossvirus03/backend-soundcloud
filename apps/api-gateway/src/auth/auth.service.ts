@@ -1,41 +1,50 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import { Injectable } from "@nestjs/common";
 import { IUser } from "@app/lib/interfaces/user/user.interface";
-import { RpcRequestWrapper } from "@app/lib";
-
+import { KafkaService } from "../kafka/kafka.service";
+import { ENUM_AUTH_TOPICS } from "@app/lib/constant/cafka.topic.constant";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
 @Injectable()
 export class AuthService {
-  constructor(@Inject("AUTH_MICROSERVICE") private authClient: ClientProxy) {}
+  constructor(
+    private kafkaClient: KafkaService,
+    @InjectQueue("send_mail") private sendMail: Queue,
+  ) {}
 
-  async demoSetCache() {
-    return this.authClient.send({ cmd: "set-cache" }, {});
+  async login(user) {
+    return this.kafkaClient.produceSend(ENUM_AUTH_TOPICS.LOGIN, user);
   }
 
-  async demoGetCache() {
-    return this.authClient.send({ cmd: "get-cache" }, {});
-  }
-
-  async login(user: IUser) {
-    return this.authClient.send({ cmd: "login-api" }, user);
-  }
-
-  async register(user: IUser) {
-    return RpcRequestWrapper(
-      await this.authClient.send({ cmd: "register-user-api" }, user),
+  async register(user) {
+    const res: IUser = await this.kafkaClient.produceSend(
+      ENUM_AUTH_TOPICS.REGISTER,
+      { ...user },
     );
+
+    if (res && res._id) {
+      await this.sendMail.add(
+        "register-user",
+        {
+          to: "nguyenhuuloi17032004@gmail.com",
+          name: "nguyen huu loi",
+        },
+        {
+          removeOnComplete: true,
+        },
+      );
+    }
+    return res;
   }
 
   async getProfile(user: IUser) {
-    return this.authClient.send({ cmd: "get-profile-api" }, user);
+    return this.kafkaClient.produceSend(ENUM_AUTH_TOPICS.GET_PROFILE, user);
   }
 
   HandleRefresh() {
-    return this.authClient.send({ cmd: "refresh-api" }, {});
+    return this.kafkaClient.produceSend(ENUM_AUTH_TOPICS.REFRESH, {});
   }
 
   async logout(payload) {
-    return RpcRequestWrapper(
-      this.authClient.send({ cmd: "logout-user-api" }, payload),
-    );
+    return this.kafkaClient.produceSend(ENUM_AUTH_TOPICS.LOGOUT, payload);
   }
 }

@@ -3,29 +3,37 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { IUser } from "@app/lib/interfaces/user/user.interface";
 import { CredentialService } from "../credential/credential.service";
-import { RpcRequestWrapper } from "@app/lib";
-import { ClientProxy } from "@nestjs/microservices";
+// import { RpcRequestWrapper, RpcResponseWrapper } from "@app/lib";
+// import { ClientProxy } from "@nestjs/microservices";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import ms from "ms";
 import { ENUM_USER_TOPICS } from "@app/lib/constant/cafka.topic.constant";
+import { ClientKafka } from "@nestjs/microservices";
+import { RpcRequestWrapper, RpcResponseWrapper } from "@app/lib";
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    @Inject("USER_MICROSERVICE") private userClient: ClientProxy,
+    @Inject("AUTH_MICROSERVICE") private clientUser: ClientKafka,
     private credentialService: CredentialService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
 
+  async onModuleInit() {
+    this.clientUser.subscribeToResponseOf(ENUM_USER_TOPICS.CREATE_USER);
+    this.clientUser.subscribeToResponseOf(ENUM_USER_TOPICS.FIND_USER_BY_ID);
+    await this.clientUser.connect();
+  }
+
   async validateUser(username: string, pass: string): Promise<any> {
     const userCredential =
       await this.credentialService.findByUsername(username);
     const id = userCredential._id.toString();
-    const user = await RpcRequestWrapper(
-      this.userClient.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, id),
+    const user = await RpcResponseWrapper(
+      await this.clientUser.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, id),
     );
     if (userCredential) {
       const isValid = this.credentialService.isValidPassword(
@@ -33,7 +41,7 @@ export class AuthService {
         userCredential.password,
       );
       if (isValid) {
-        return { _id: id, ...user };
+        return user;
       }
     }
     return null;
@@ -60,19 +68,21 @@ export class AuthService {
 
   async register(user: IUser) {
     const newUser = await RpcRequestWrapper(
-      await this.userClient.send(ENUM_USER_TOPICS.CREATE_USER, user),
+      this.clientUser.send(ENUM_USER_TOPICS.CREATE_USER, { ...user }),
     );
 
-    await this.credentialService.create(
-      newUser._id,
-      user.username,
-      user.password,
-    );
-
-    return {
-      _id: newUser._id,
-      createdAt: newUser.createdAt,
-    };
+    if (newUser && newUser._id) {
+      await this.credentialService.create(
+        newUser._id,
+        user.username,
+        user.password,
+      );
+      return {
+        _id: newUser._id,
+        createdAt: newUser.createdAt,
+      };
+    }
+    return newUser;
   }
 
   createRefreshToken(payload: any) {
@@ -93,8 +103,8 @@ export class AuthService {
       //get user
       const id = (await this.credentialService.findUserByToken(refreshToken))
         ._id;
-      const user = await RpcRequestWrapper(
-        this.userClient.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, id),
+      const user = await RpcResponseWrapper(
+        await this.clientUser.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, id),
       );
       if (user) {
         const { username, _id, email, role } = user;
@@ -135,7 +145,10 @@ export class AuthService {
   }
 
   async getProfile(user: IUser) {
-    return this.userClient.send(ENUM_USER_TOPICS.FIND_USER_BY_ID, user._id);
+    return await this.clientUser.send(
+      ENUM_USER_TOPICS.FIND_USER_BY_ID,
+      user._id,
+    );
   }
   async logout(payload) {
     await this.cacheManager.del("refreshToken");

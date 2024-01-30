@@ -1,5 +1,8 @@
-import { RpcRequestWrapper } from "@app/lib";
-import { ENUM_USER_TOPICS } from "@app/lib/constant/cafka.topic.constant";
+import { RpcResponseWrapper } from "@app/lib";
+import {
+  ENUM_AUTH_TOPICS,
+  ENUM_USER_TOPICS,
+} from "@app/lib/constant/cafka.topic.constant";
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientKafka } from "@nestjs/microservices";
 
@@ -10,14 +13,19 @@ export class KafkaService {
     private readonly kafkaClient: ClientKafka,
   ) {}
   async onModuleInit() {
-    Object.values(ENUM_USER_TOPICS).forEach((TOPIC) =>
-      this.kafkaClient.subscribeToResponseOf(TOPIC),
-    );
+    Object.values(ENUM_USER_TOPICS).forEach((TOPIC) => {
+      this.kafkaClient.subscribeToResponseOf(TOPIC);
+    });
+
+    Object.values(ENUM_AUTH_TOPICS).forEach((TOPIC) => {
+      this.kafkaClient.subscribeToResponseOf(TOPIC);
+    });
 
     await this.kafkaClient.connect();
   }
 
-  async produceSend<T, N>(topic: string, data: T): Promise<N> {
-    return RpcRequestWrapper(this.kafkaClient.send(topic, data));
+  async produceSend(topic: string, data) {
+    const res = await RpcResponseWrapper(this.kafkaClient.send(topic, data));
+    return res;
   }
 }

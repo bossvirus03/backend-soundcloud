@@ -6,19 +6,22 @@ import { CredentialModule } from "../credential/credential.module";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { CacheModule } from "@nestjs/cache-manager";
-import * as redisStore from "cache-manager-redis-store";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ClientsModule.register([
       {
-        name: "USER_MICROSERVICE",
-        transport: Transport.TCP,
+        name: "AUTH_MICROSERVICE",
+        transport: Transport.KAFKA,
         options: {
-          host: "localhost",
-          port: 3003,
+          client: {
+            clientId: "auth",
+            brokers: ["localhost:29092"],
+          },
+          consumer: {
+            groupId: "auth-microservice-consumer",
+          },
         },
       },
     ]),
@@ -36,12 +39,6 @@ import * as redisStore from "cache-manager-redis-store";
     }),
     CredentialModule,
     PassportModule,
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
-    }),
   ],
   providers: [AuthService],
   exports: [AuthService],

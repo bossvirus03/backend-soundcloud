@@ -24,8 +24,8 @@ export class CredentialService {
     return compareSync(password, hashPassword);
   }
 
-  findByUsername(username: string) {
-    return this.credentialModel.findOne({ username: username });
+  async findByUsername(username: string) {
+    return await this.credentialModel.findOne({ username });
   }
 
   findById(id: string) {
@@ -39,14 +39,6 @@ export class CredentialService {
       username,
       password: pass,
     });
-  }
-
-  findAll() {
-    return `This action returns all credential`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} credential`;
   }
 
   async findUserByToken(refreshToken: string) {

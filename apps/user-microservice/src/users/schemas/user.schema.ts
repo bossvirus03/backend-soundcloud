@@ -18,9 +18,6 @@ export class User {
   gender: string;
 
   @Prop()
-  refreshToken: string;
-
-  @Prop()
   address: string;
 
   @Prop()

@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/api-gateway/src",
+  "sourceRoot": "apps",
   "compilerOptions": {
-    "plugins": [
-      "@nestjs/swagger"
-    ],
+    "assets": ["api-gateway/src/templates/*"],
+    "watchAssets": true,
+    "plugins": ["@nestjs/swagger"],
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
@@ -46,6 +46,13 @@
       "entryFile": "main",
       "sourceRoot": "apps/api-gateway/src",
       "compilerOptions": {
+        "assets": [
+          {
+            "include": "/src/templates/*",
+            "outDir": "dist/apps"
+          }
+        ],
+        "watchAssets": true,
         "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
       }
     },

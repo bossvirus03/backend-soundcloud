@@ -1,23 +1,25 @@
 import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
-import { ClientsModule, Transport } from "@nestjs/microservices";
+// import { ClientsModule, Transport } from "@nestjs/microservices";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { LocalStrategy } from "./passport/local.strategy";
+import { KafkaModule } from "../kafka/kafka.module";
+import { BullModule } from "@nestjs/bull";
+import { EmailConsumer } from "./consumers/email.consumer";
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: "AUTH_MICROSERVICE",
-        transport: Transport.TCP,
-        options: {
-          host: "localhost",
-          port: 3001,
-        },
-      },
-    ]),
+    // BullModule.forRoot({
+    //   redis: {
+    //     host: process.env.REDIS_HOST,
+    //     port: +process.env.REDIS_PORT,
+    //   },
+    // }),
+    BullModule.registerQueue({
+      name: "send_mail",
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -30,8 +32,9 @@ import { LocalStrategy } from "./passport/local.strategy";
       }),
       inject: [ConfigService],
     }),
+    KafkaModule,
   ],
   controllers: [AuthController],
-  providers: [LocalStrategy, AuthService],
+  providers: [LocalStrategy, AuthService, EmailConsumer],
 })
 export class AuthModule {}
