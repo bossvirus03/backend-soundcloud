@@ -7,14 +7,17 @@ export class EmailConsumer {
   constructor(private readonly mailerService: MailerService) {}
   @Process({ name: "register-user" })
   async registerEmail(job: Job) {
-    console.log(job.data);
     const time1 = new Date();
     await this.mailerService.sendMail({
       to: job.data["to"],
       subject: "Welcome to Nice App!",
       template: "./new-user",
+      context: {
+        name: job.data["name"],
+        desc: "",
+      },
     });
     const time2 = new Date();
-    console.log(`send success: `, time1.getTime() - time2.getTime(), "ms");
+    console.log(`send success: `, time2.getTime() - time1.getTime(), "ms");
   }
 }

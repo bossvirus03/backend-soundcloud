@@ -22,8 +22,7 @@ export class UsersController {
 
   @MessagePattern(ENUM_USER_TOPICS.CREATE_USER)
   async create(@Payload() createUserDto: CreateUserDto) {
-    const userProfile = await this.usersService.create(createUserDto);
-    return userProfile;
+    return this.usersService.create(createUserDto);
   }
 
   @MessagePattern(ENUM_USER_TOPICS.GET_ALL_USERS)

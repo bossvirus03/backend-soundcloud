@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./schemas/user.schema";
 import { compareSync } from "bcryptjs";
@@ -6,25 +6,26 @@ import { SoftDeleteModel } from "soft-delete-plugin-mongoose";
 import aqp from "api-query-params";
 import { CreateUserDto } from "@app/lib/dto/user/create-user.dto";
 import { ClientKafka } from "@nestjs/microservices";
+// import { RpcRequestWrapper } from "@app/lib";
+import { ENUM_AUTH_TOPICS } from "@app/lib/constant/cafka.topic.constant";
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private UserModel: SoftDeleteModel<UserDocument>,
-    @Inject("USER_MICROSERVICE") private authClient: ClientKafka,
+    @Inject("USER_MICROSERVICE") private userClient: ClientKafka,
   ) {}
 
+  async onModuleInit() {
+    this.userClient.subscribeToResponseOf(
+      ENUM_AUTH_TOPICS.CREDENTIAL_FIND_USERNAME,
+    );
+    await this.userClient.connect();
+  }
   async create(createUserDto: CreateUserDto) {
-    // const { username } = createUserDto;
-    const isExit = await this.UserModel.findOne({ email: createUserDto.email });
-    if (isExit) return new BadRequestException("Email đã tồn tại!");
-    // isExit = await RpcResponseWrapper(
-    //   await this.authClient.send(
-    //     ENUM_AUTH_TOPICS.CREDENTIAL_FIND_USERNAME,
-    //     username,
-    //   ),
-    // );
-
-    if (isExit) return new BadRequestException("Username đã tồn tại!");
+    let isExit = await this.UserModel.findOne({ email: createUserDto.email });
+    if (isExit) return new Error("Email đã tồn tại!");
+    isExit = await this.UserModel.findOne({ username: createUserDto.username });
+    if (isExit) return new Error("Username đã tồn tại!");
     const user = await this.UserModel.create({
       email: createUserDto.email,
       age: createUserDto.age,

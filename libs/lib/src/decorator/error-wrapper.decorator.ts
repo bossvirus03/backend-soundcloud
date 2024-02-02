@@ -1,5 +1,6 @@
+import { BadRequestException, GatewayTimeoutException } from "@nestjs/common";
 import { RpcException } from "@nestjs/microservices";
-import { Observable, firstValueFrom } from "rxjs";
+import { Observable, firstValueFrom, timeout } from "rxjs";
 
 // export async function AxiosErrorWrapper(axios: Promise<AxiosResponse>) {
 //   try {
@@ -10,24 +11,44 @@ import { Observable, firstValueFrom } from "rxjs";
 //   }
 // }
 
-export async function RpcRequestWrapper<T>(obs: Observable<T>) {
-  return await firstValueFrom(obs)
-    .then((data) => {
-      return data;
-    })
-    .catch((error) => {
-      return error;
-    });
-}
-export async function RpcResponseWrapper<T>(obs: Observable<T>) {
+export async function RpcResponseWrapper<T>(
+  promise: Promise<T>,
+  timeoutInMs = 10000,
+) {
   try {
-    const result = await firstValueFrom(obs);
-    console.log("wrapper >>>", result);
+    const timeout = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        reject(new GatewayTimeoutException());
+      }, timeoutInMs);
+    });
 
-    return result["_doc"] ?? result;
+    const data = await Promise.race([promise, timeout]);
+    const response = { data };
+
+    return response;
   } catch (error) {
-    if (error) {
-      throw new RpcException(error);
+    if (error instanceof RpcException) {
+      throw error;
     }
+    throw new RpcException(new BadRequestException());
+  }
+}
+export async function RpcRequestWrapper<T>(
+  obs: Observable<T>,
+  Timeout = 10000,
+) {
+  try {
+    const result = await firstValueFrom(obs.pipe(timeout(Timeout)));
+    try {
+      if (result["_doc"]) return result["_doc"];
+    } catch (error) {
+      throw new RpcException(new BadRequestException());
+    }
+    return result;
+  } catch (error) {
+    if (error instanceof RpcException) {
+      throw error;
+    }
+    throw new RpcException(error);
   }
 }

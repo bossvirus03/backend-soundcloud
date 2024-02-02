@@ -4,6 +4,8 @@ import { KafkaService } from "../kafka/kafka.service";
 import { ENUM_AUTH_TOPICS } from "@app/lib/constant/cafka.topic.constant";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
+import { join } from "path";
+import { CreateUserDto } from "@app/lib/dto/user/create-user.dto";
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,18 +17,17 @@ export class AuthService {
     return this.kafkaClient.produceSend(ENUM_AUTH_TOPICS.LOGIN, user);
   }
 
-  async register(user) {
-    const res: IUser = await this.kafkaClient.produceSend(
-      ENUM_AUTH_TOPICS.REGISTER,
-      { ...user },
-    );
-
+  async register(user: CreateUserDto) {
+    const res = await this.kafkaClient.produceSend(ENUM_AUTH_TOPICS.REGISTER, {
+      ...user,
+    });
     if (res && res._id) {
       await this.sendMail.add(
         "register-user",
         {
           to: "nguyenhuuloi17032004@gmail.com",
-          name: "nguyen huu loi",
+          name: user.username,
+          gif: join(__dirname, "public/gif/1.gif"),
         },
         {
           removeOnComplete: true,

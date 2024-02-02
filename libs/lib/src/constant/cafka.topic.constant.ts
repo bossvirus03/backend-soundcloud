@@ -10,5 +10,5 @@ export enum ENUM_AUTH_TOPICS {
   REFRESH = "refresh-api",
   GET_PROFILE = "get-profile-api",
   VALIDATE_USER = "auth_validate_user",
-  CREDENTIAL_FIND_USERNAME = "credential-find-username",
+  CREDENTIAL_FIND_USERNAME = "credential_find_username",
 }

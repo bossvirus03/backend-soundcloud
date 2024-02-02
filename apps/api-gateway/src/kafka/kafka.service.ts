@@ -1,4 +1,4 @@
-import { RpcResponseWrapper } from "@app/lib";
+import { RpcRequestWrapper } from "@app/lib";
 import {
   ENUM_AUTH_TOPICS,
   ENUM_USER_TOPICS,
@@ -25,7 +25,9 @@ export class KafkaService {
   }
 
   async produceSend(topic: string, data) {
-    const res = await RpcResponseWrapper(this.kafkaClient.send(topic, data));
+    const res = await RpcRequestWrapper(
+      await this.kafkaClient.send(topic, data),
+    );
     return res;
   }
 }
