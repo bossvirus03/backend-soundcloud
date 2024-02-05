@@ -8,6 +8,7 @@ import { LocalStrategy } from "./passport/local.strategy";
 import { KafkaModule } from "../kafka/kafka.module";
 import { BullModule } from "@nestjs/bull";
 import { EmailConsumer } from "./consumers/email.consumer";
+import { JwtStrategy } from "./passport/jwt.strategy";
 
 @Module({
   imports: [
@@ -35,6 +36,6 @@ import { EmailConsumer } from "./consumers/email.consumer";
     KafkaModule,
   ],
   controllers: [AuthController],
-  providers: [LocalStrategy, AuthService, EmailConsumer],
+  providers: [LocalStrategy, JwtStrategy, AuthService, EmailConsumer],
 })
 export class AuthModule {}

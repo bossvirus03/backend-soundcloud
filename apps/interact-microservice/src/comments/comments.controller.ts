@@ -8,8 +8,8 @@ import {
   Delete,
 } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
-import { CreateCommentDto } from "../../../../libs/lib/src/dto/comment/create-comment.dto";
-import { UpdateCommentDto } from "../../../../libs/lib/src/dto/comment/update-comment.dto";
+import { CreateCommentDto } from "../../../../libs/shared/src/dto/comment/create-comment.dto";
+import { UpdateCommentDto } from "../../../../libs/shared/src/dto/comment/update-comment.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { User } from "@app/lib";
 import { IUser } from "@app/lib/interfaces/user/user.interface";
@@ -21,7 +21,7 @@ export class CommentsController {
   @Post()
   async create(
     @Body() createCommentDto: CreateCommentDto,
-    @User() user: IUser,
+    @User() user: IUser
   ) {
     return await this.commentsService.create(createCommentDto, user);
   }

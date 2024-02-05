@@ -12,9 +12,9 @@ export class LikesController {
   ) {}
 
   @MessagePattern({ cmd: "like-track" })
-  create(@Payload() payload) {
+  LikeTrack(@Payload() payload) {
     const { createLikeDto, user } = payload;
-    return this.likesService.create(createLikeDto, user);
+    return this.likesService.handleLikeTrack(createLikeDto, user);
   }
 
   @MessagePattern({ cmd: "get-track-liked-by-user" })

@@ -20,10 +20,10 @@
     "esModuleInterop": true,
     "paths": {
       "@app/lib": [
-        "libs/lib/src"
+        "libs/shared/src"
       ],
       "@app/lib/*": [
-        "libs/lib/src/*"
+        "libs/shared/src/*"
       ]
     }
   }

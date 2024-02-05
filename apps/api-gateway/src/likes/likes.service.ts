@@ -7,7 +7,7 @@ export class LikesService {
   constructor(
     @Inject("INTERACT_MICROSERVICE") private likeClient: ClientProxy,
   ) {}
-  async create(createLikeDto, user) {
+  async LikeTrack(createLikeDto, user) {
     return this.likeClient.send({ cmd: "like-track" }, { createLikeDto, user });
   }
 

@@ -5,13 +5,13 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Playlist, PlaylistDocument } from "./schemas/playlist.schema";
 import { SoftDeleteModel } from "soft-delete-plugin-mongoose";
 import aqp from "api-query-params";
-import { IUser } from "../../../../libs/lib/src/interfaces/user/user.interface";
+import { IUser } from "../../../../libs/shared/src/interfaces/user/user.interface";
 
 @Injectable()
 export class PlaylistsService {
   constructor(
     @InjectModel(Playlist.name)
-    private PlaylistModel: SoftDeleteModel<PlaylistDocument>,
+    private PlaylistModel: SoftDeleteModel<PlaylistDocument>
   ) {}
   async create(createPlaylistDto: CreatePlaylistDto, user: IUser) {
     const playlist = await this.PlaylistModel.create({
@@ -58,7 +58,7 @@ export class PlaylistsService {
       { _id: updatePlaylistDto.id },
       {
         ...updatePlaylistDto,
-      },
+      }
     );
     return playlist;
   }

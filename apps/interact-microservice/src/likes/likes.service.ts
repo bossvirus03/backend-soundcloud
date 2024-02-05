@@ -6,7 +6,7 @@ import { PostgresService } from "../../../postgres.service";
 export class LikesService {
   constructor(private readonly postgresService: PostgresService) {}
 
-  async create(createLikeDto, user: IUser) {
+  async handleLikeTrack(createLikeDto, user: IUser) {
     const { track, quantity } = createLikeDto;
     const isLiked = await this.postgresService.query(
       `SELECT * FROM likes WHERE userid=\'${user._id}\' AND trackid=\'${track}\'`,

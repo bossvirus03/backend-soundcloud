@@ -25,9 +25,7 @@ export class CredentialService {
   }
 
   async findByUsername(username: string) {
-    // console.log("user find", username);
     const user = await this.credentialModel.findOne({ username });
-    // console.log(user);
     return user;
   }
 

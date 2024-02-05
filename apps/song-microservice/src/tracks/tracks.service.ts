@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IUser } from "../../../../libs/lib/src/interfaces/user/user.interface";
+import { IUser } from "../../../../libs/shared/src/interfaces/user/user.interface";
 import { CreateTrackDto } from "@app/lib/dto/track/create-track.dto";
 import { PostgresService } from "apps/postgres.service";
 import aqp from "api-query-params";
@@ -19,14 +19,15 @@ export class TracksService {
     } = createTrackDto;
 
     const track = await this.postgresService.query(
-      `INSERT INTO tracks (title, category, countlike, countplay, description, imgurl, trackurl, uploader) VALUES (\'${title}\', \'${category}\', ${countLike}, ${countPlay}, \'${description}\', \'${imgUrl}\', \'${trackUrl}\', \'${user._id}\')`,
+      `INSERT INTO tracks (title, category, countlike, countplay, description, imgurl, trackurl, uploader) VALUES (\'${title}\', \'${category}\', ${countLike}, ${countPlay}, \'${description}\', \'${imgUrl}\', \'${trackUrl}\', \'${user._id}\')`
     );
+    console.log(track);
     return track;
   }
 
   async getTopTrack(limit: number, category: string) {
     const result = await this.postgresService.query(
-      `SELECT * FROM tracks WHERE category = \'${category}\' LIMIT ${limit}`,
+      `SELECT * FROM tracks WHERE category = \'${category}\' LIMIT ${limit}`
     );
     const resultSorted = result.sort(function (a, b) {
       return a.countplay - b.countplay;
@@ -37,13 +38,13 @@ export class TracksService {
   async increaseView(trackId) {
     const prevView = (
       await this.postgresService.query(
-        `SELECT countplay FROM tracks WHERE id=\'${trackId}\'`,
+        `SELECT countplay FROM tracks WHERE id=\'${trackId}\'`
       )
     )[0].countplay;
     console.log(prevView);
 
     await this.postgresService.query(
-      `UPDATE tracks SET countplay=${prevView + 1}`,
+      `UPDATE tracks SET countplay=${prevView + 1}`
     );
     return "ok";
   }
@@ -59,7 +60,7 @@ export class TracksService {
     )[0].count;
     const totalPages = Math.ceil(totalItems / defaultLimit);
     const result = await this.postgresService.query(
-      `SELECT * FROM tracks LIMIT ${defaultLimit} OFFSET ${offset};`,
+      `SELECT * FROM tracks LIMIT ${defaultLimit} OFFSET ${offset};`
     );
     return {
       meta: {

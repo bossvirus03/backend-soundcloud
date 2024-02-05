@@ -3,6 +3,7 @@ import { LikesService } from "./likes.service";
 import { ApiTags } from "@nestjs/swagger";
 import { Req, Get, Query } from "@nestjs/common";
 import { CreateLikeDto } from "@app/lib/dto/like/create-like.dto";
+import { User } from "@app/lib";
 
 @ApiTags("likes")
 @Controller("likes")
@@ -12,8 +13,8 @@ export class LikesController {
   ) {}
 
   @Post()
-  create(@Body() createLikeDto: CreateLikeDto, @Req() req) {
-    return this.likesService.create(createLikeDto, req.user);
+  create(@Body() createLikeDto: CreateLikeDto, @User() user) {
+    return this.likesService.LikeTrack(createLikeDto, user);
   }
 
   @Get()

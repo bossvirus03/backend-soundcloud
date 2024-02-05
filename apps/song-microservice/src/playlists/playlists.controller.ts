@@ -12,7 +12,7 @@ import { PlaylistsService } from "./playlists.service";
 import { CreatePlaylistDto } from "./dto/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dto/update-playlist.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { IUser } from "../../../../libs/lib/src/interfaces/user/user.interface";
+import { IUser } from "../../../../libs/shared/src/interfaces/user/user.interface";
 import { User } from "@app/lib";
 @ApiTags("playlists")
 @Controller("playlists")
@@ -28,7 +28,7 @@ export class PlaylistsController {
   findAll(
     @Query("current") page: number,
     @Query("pageSize") limit: number,
-    @Query() qs: string,
+    @Query() qs: string
   ) {
     return this.playlistsService.findAll(page, limit, qs);
   }

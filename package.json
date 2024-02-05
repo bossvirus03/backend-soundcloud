@@ -15,6 +15,7 @@
     "start": "nest start --watch",
     "start:dev": "nest start --watch",
     "start:gateway": "nest start --watch api-gateway",
+    "start:song": "nest start --watch song-microservice",
     "start:auth": "nest start --watch auth-microservice",
     "start:user": "nest start --watch user-microservice",
     "start:interact": "nest start --watch interact-microservice",
@@ -123,7 +124,7 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@app/lib(|/.*)$": "<rootDir>/libs/lib/src/$1"
+      "^@app/lib(|/.*)$": "<rootDir>/libs/shared/src/$1"
     }
   }
 }
